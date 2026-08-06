@@ -1,182 +1,702 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Test Deep Link MiniATM</title>
-<style>
-  * { box-sizing: border-box; }
-  body {
-    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-    background: #f2f4f7;
-    margin: 0;
-    padding: 24px 16px;
-    color: #1a1a1a;
-  }
-  .container {
-    max-width: 480px;
-    margin: 0 auto;
-  }
-  h1 {
-    font-size: 20px;
-    margin-bottom: 4px;
-  }
-  p.desc {
-    font-size: 13px;
-    color: #667085;
-    margin-top: 0;
-    margin-bottom: 20px;
-  }
-  .card {
-    background: #fff;
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-  }
-  .card h3 {
-    margin: 0 0 12px 0;
-    font-size: 15px;
-  }
-  .menu-btn {
-    display: block;
-    width: 100%;
-    padding: 14px;
-    margin-bottom: 10px;
-    border-radius: 10px;
-    border: none;
-    font-size: 15px;
-    font-weight: 600;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    color: #fff;
-  }
-  .btn-saldo   { background: #12b76a; }
-  .btn-transfer{ background: #2970ff; }
-  .btn-tarik   { background: #f04438; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Deep Link MiniATM</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
 
-  .scheme-label {
-    font-size: 12px;
-    color: #667085;
-    margin: 12px 0 6px;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-  }
+        body {
+            font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: #f2f4f7;
+            margin: 0;
+            padding: 24px 16px;
+            color: #1a1a1a;
+        }
 
-  .link-block { display: flex; gap: 8px; margin-bottom: 8px; }
-  .link-block a { flex: 1; }
-  .link-block .small { font-size: 13px; padding: 10px; }
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+        }
 
-  .params {
-    font-size: 12px;
-    background: #f9fafb;
-    border: 1px solid #eaecf0;
-    border-radius: 8px;
-    padding: 10px;
-    margin-top: 8px;
-    color: #475467;
-    word-break: break-all;
-  }
+        h1 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
 
-  .log {
-    background: #101828;
-    color: #d0d5dd;
-    font-family: monospace;
-    font-size: 12px;
-    padding: 10px;
-    border-radius: 8px;
-    min-height: 60px;
-    white-space: pre-wrap;
-    word-break: break-all;
-  }
-</style>
+        p.desc {
+            font-size: 13px;
+            color: #667085;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .card h3 {
+            margin: 0 0 12px 0;
+            font-size: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+            color: #344054;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #2970ff;
+            box-shadow: 0 0 0 3px rgba(41, 112, 255, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 60px;
+            resize: vertical;
+            font-family: monospace;
+        }
+
+        .form-group small {
+            display: block;
+            margin-top: 4px;
+            font-size: 11px;
+            color: #667085;
+        }
+
+        .menu-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            border: none;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            color: #fff;
+            transition: transform 0.1s, opacity 0.2s;
+        }
+
+        .menu-btn:hover {
+            opacity: 0.9;
+        }
+
+        .menu-btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-saldo {
+            background: #12b76a;
+        }
+
+        .btn-transfer {
+            background: #2970ff;
+        }
+
+        .btn-tarik {
+            background: #f04438;
+        }
+
+        .link-block {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .link-block a,
+        .link-block button {
+            flex: 1;
+        }
+
+        .link-block .small {
+            font-size: 13px;
+            padding: 10px;
+        }
+
+        .params {
+            font-size: 12px;
+            background: #f9fafb;
+            border: 1px solid #eaecf0;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 8px;
+            color: #475467;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .params .copy-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #fff;
+            border: 1px solid #d0d5dd;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            color: #344054;
+        }
+
+        .params .copy-btn:hover {
+            background: #f9fafb;
+        }
+
+        .log {
+            background: #101828;
+            color: #d0d5dd;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            min-height: 60px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            position: relative;
+        }
+
+        .log .copy-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            color: #9ca3af;
+        }
+
+        .log .copy-btn:hover {
+            background: #374151;
+        }
+
+        .tab-container {
+            margin-bottom: 12px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 4px;
+            background: #f2f4f7;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            color: #667085;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: #fff;
+            color: #1a1a1a;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .history-item {
+            padding: 8px;
+            background: #1f2937;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: #374151;
+        }
+
+        .history-item .time {
+            color: #6b7280;
+            font-size: 10px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #1f2937;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .collapsible {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .collapsible.open {
+            max-height: 500px;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #2970ff;
+            font-size: 12px;
+            cursor: pointer;
+            padding: 4px 0;
+            margin-top: 4px;
+        }
+
+        .toggle-btn:hover {
+            text-decoration: underline;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+        }
+
+        .checkbox-group label {
+            margin: 0;
+            font-size: 13px;
+        }
+    </style>
 </head>
+
 <body>
-<div class="container">
+    <div class="container">
 
-  <h1>Test Deep Link MiniATM</h1>
-  <p class="desc">Klik tombol untuk trigger deep link. Gunakan tombol <b>ma://</b> untuk custom scheme, atau <b>https://</b> untuk App Links.</p>
+        <h1>Test Deep Link MiniATM</h1>
+        <p class="desc">Isi parameter dan klik tombol untuk trigger deep link. Gunakan tombol <b>ma://</b> untuk custom scheme, atau <b>https://</b> untuk App Links.</p>
 
-  <!-- CEK SALDO -->
-  <div class="card">
-    <h3>💰 Cek Saldo</h3>
-    <div class="link-block">
-      <a class="menu-btn btn-saldo small" href="#" onclick="openLink('ma', 'CEK_SALDO'); return false;">ma:// Cek Saldo</a>
-      <a class="menu-btn btn-saldo small" href="#" onclick="openLink('https', 'CEK_SALDO'); return false;">https:// Cek Saldo</a>
+        <!-- TAB NAVIGASI -->
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('saldo')">💰 Cek Saldo</button>
+                <button class="tab-btn" onclick="switchTab('transfer')">🔁 Transfer</button>
+                <button class="tab-btn" onclick="switchTab('tarik')">💵 Tarik Tunai</button>
+            </div>
+        </div>
+
+        <!-- CEK SALDO -->
+        <div id="tab-saldo" class="tab-content active">
+            <div class="card">
+                <h3>💰 Cek Saldo</h3>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="saldo-payload-toggle" onchange="togglePayload('saldo')">
+                    <label for="saldo-payload-toggle">Tambah Payload Custom</label>
+                </div>
+                
+                <div id="saldo-payload-section" class="collapsible">
+                    <div class="form-group">
+                        <label for="saldo-payload">Payload (JSON)</label>
+                        <textarea id="saldo-payload" placeholder='{"key": "value"}'>{}</textarea>
+                        <small>Data tambahan dalam format JSON</small>
+                    </div>
+                </div>
+
+                <div class="link-block">
+                    <button class="menu-btn btn-saldo small" onclick="openLink('ma', 'CEK_SALDO')">ma:// Cek Saldo</button>
+                    <button class="menu-btn btn-saldo small" onclick="openLink('https', 'CEK_SALDO')">https:// Cek Saldo</button>
+                </div>
+                <div class="params" id="param-CEK_SALDO">
+                    <button class="copy-btn" onclick="copyToClipboard('param-CEK_SALDO')">📋 Copy</button>
+                    <span class="param-text"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSFER -->
+        <div id="tab-transfer" class="tab-content">
+            <div class="card">
+                <h3>🔁 Transfer</h3>
+                
+                <div class="form-group">
+                    <label for="transfer-nominal">Nominal (Rp)</label>
+                    <input type="number" id="transfer-nominal" placeholder="10000" value="100000" oninput="updatePreview('TRANSFER')">
+                    <small>Minimal Rp 10.000, maksimal Rp 25.000.000</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="transfer-norek">Nomor Rekening Tujuan</label>
+                    <input type="text" id="transfer-norek" placeholder="1234567890" value="1234567890" maxlength="32" oninput="updatePreview('TRANSFER')">
+                    <small>Nomor rekening tujuan (6-32 digit)</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="transfer-bank">Bank Tujuan</label>
+                    <select id="transfer-bank" onchange="updatePreview('TRANSFER')">
+                        <option value="">-- Pilih Bank --</option>
+                        <option value="BRI" selected>BRI - Bank Rakyat Indonesia</option>
+                        <option value="BNI">BNI - Bank Negara Indonesia</option>
+                        <option value="BCA">BCA - Bank Central Asia</option>
+                        <option value="MANDIRI">MANDIRI - Bank Mandiri</option>
+                        <option value="BSI">BSI - Bank Syariah Indonesia</option>
+                        <option value="BTPN">BTPN - Bank Tabungan Pensiunan Nasional</option>
+                        <option value="CIMB">CIMB - Bank CIMB Niaga</option>
+                        <option value="DANAMON">DANAMON - Bank Danamon</option>
+                        <option value="PERMATA">PERMATA - Bank Permata</option>
+                        <option value="PANIN">PANIN - Panin Bank</option>
+                        <option value="OCBC">OCBC - OCBC NISP</option>
+                        <option value="MEGA">MEGA - Bank Mega</option>
+                        <option value="BUKOPIN">BUKOPIN - Bank Bukopin</option>
+                        <option value="JENIUS">JENIUS - Jenius (BTPN)</option>
+                        <option value="SEABANK">SEABANK - Sea Bank</option>
+                        <option value="NEO">NEO - Bank Neo Commerce</option>
+                        <option value="JAGO">JAGO - Bank Jago</option>
+                        <option value="ARTAJASA">ARTAJASA - ATM Bersama</option>
+                        <option value="ALTO">ALTO - ATM Alto</option>
+                        <option value="PRIMA">PRIMA - ATM Prima</option>
+                    </select>
+                    <small>Pilih bank tujuan transfer</small>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="transfer-payload-toggle" checked onchange="togglePayload('transfer')">
+                    <label for="transfer-payload-toggle">Tambah Payload Custom</label>
+                </div>
+                
+                <div id="transfer-payload-section" class="collapsible open">
+                    <div class="form-group">
+                        <label for="transfer-payload">Payload (JSON)</label>
+                        <textarea id="transfer-payload" placeholder='{"note": "catatan transfer"}' oninput="updatePreview('TRANSFER')">{}</textarea>
+                        <small>Data tambahan dalam format JSON (opsional)</small>
+                    </div>
+                </div>
+
+                <div class="link-block">
+                    <button class="menu-btn btn-transfer small" onclick="openLink('ma', 'TRANSFER')">ma:// Transfer</button>
+                    <button class="menu-btn btn-transfer small" onclick="openLink('https', 'TRANSFER')">https:// Transfer</button>
+                </div>
+                <div class="params" id="param-TRANSFER">
+                    <button class="copy-btn" onclick="copyToClipboard('param-TRANSFER')">📋 Copy</button>
+                    <span class="param-text"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- TARIK TUNAI -->
+        <div id="tab-tarik" class="tab-content">
+            <div class="card">
+                <h3>💵 Tarik Tunai</h3>
+                
+                <div class="checkbox-group">
+                    <input type="checkbox" id="tarik-payload-toggle" onchange="togglePayload('tarik')">
+                    <label for="tarik-payload-toggle">Tambah Payload Custom</label>
+                </div>
+                
+                <div id="tarik-payload-section" class="collapsible">
+                    <div class="form-group">
+                        <label for="tarik-payload">Payload (JSON)</label>
+                        <textarea id="tarik-payload" placeholder='{"key": "value"}'>{}</textarea>
+                        <small>Data tambahan dalam format JSON</small>
+                    </div>
+                </div>
+
+                <div class="link-block">
+                    <button class="menu-btn btn-tarik small" onclick="openLink('ma', 'TARIK_TUNAI')">ma:// Tarik Tunai</button>
+                    <button class="menu-btn btn-tarik small" onclick="openLink('https', 'TARIK_TUNAI')">https:// Tarik Tunai</button>
+                </div>
+                <div class="params" id="param-TARIK_TUNAI">
+                    <button class="copy-btn" onclick="copyToClipboard('param-TARIK_TUNAI')">📋 Copy</button>
+                    <span class="param-text"></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOG & HISTORY -->
+        <div class="card">
+            <h3>📋 Log URL Terakhir</h3>
+            <div class="log" id="logBox">
+                <button class="copy-btn" onclick="copyToClipboard('logBox')">📋 Copy</button>
+                <span class="log-text">Belum ada link yang diklik.</span>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📜 Riwayat URL</h3>
+            <div id="historyList" style="max-height: 200px; overflow-y: auto;">
+                <div style="color: #667085; font-size: 12px;">Belum ada riwayat</div>
+            </div>
+            <button class="toggle-btn" onclick="clearHistory()">🗑️ Hapus Riwayat</button>
+        </div>
+
     </div>
-    <div class="params" id="param-CEK_SALDO"></div>
-  </div>
 
-  <!-- TRANSFER -->
-  <div class="card">
-    <h3>🔁 Transfer</h3>
-    <div class="link-block">
-      <a class="menu-btn btn-transfer small" href="#" onclick="openLink('ma', 'TRANSFER'); return false;">ma:// Transfer</a>
-      <a class="menu-btn btn-transfer small" href="#" onclick="openLink('https', 'TRANSFER'); return false;">https:// Transfer</a>
-    </div>
-    <div class="params" id="param-TRANSFER"></div>
-  </div>
+    <div class="toast" id="toast">Tersalin ke clipboard!</div>
 
-  <!-- TARIK TUNAI -->
-  <div class="card">
-    <h3>💵 Tarik Tunai</h3>
-    <div class="link-block">
-      <a class="menu-btn btn-tarik small" href="#" onclick="openLink('ma', 'TARIK_TUNAI'); return false;">ma:// Tarik Tunai</a>
-      <a class="menu-btn btn-tarik small" href="#" onclick="openLink('https', 'TARIK_TUNAI'); return false;">https:// Tarik Tunai</a>
-    </div>
-    <div class="params" id="param-TARIK_TUNAI"></div>
-  </div>
+    <script>
+        // Daftar bank (bisa diupdate sesuai data dari API)
+        const bankList = [
+            { code: 'BRI', name: 'Bank Rakyat Indonesia' },
+            { code: 'BNI', name: 'Bank Negara Indonesia' },
+            { code: 'BCA', name: 'Bank Central Asia' },
+            { code: 'MANDIRI', name: 'Bank Mandiri' },
+            { code: 'BSI', name: 'Bank Syariah Indonesia' },
+            { code: 'BTPN', name: 'Bank Tabungan Pensiunan Nasional' },
+            { code: 'CIMB', name: 'Bank CIMB Niaga' },
+            { code: 'DANAMON', name: 'Bank Danamon' },
+            { code: 'PERMATA', name: 'Bank Permata' },
+            { code: 'PANIN', name: 'Panin Bank' },
+            { code: 'OCBC', name: 'OCBC NISP' },
+            { code: 'MEGA', name: 'Bank Mega' },
+            { code: 'BUKOPIN', name: 'Bank Bukopin' },
+            { code: 'JENIUS', name: 'Jenius (BTPN)' },
+            { code: 'SEABANK', name: 'Sea Bank' },
+            { code: 'NEO', name: 'Bank Neo Commerce' },
+            { code: 'JAGO', name: 'Bank Jago' },
+            { code: 'ARTAJASA', name: 'ATM Bersama' },
+            { code: 'ALTO', name: 'ATM Alto' },
+            { code: 'PRIMA', name: 'ATM Prima' }
+        ];
 
-  <div class="card">
-    <h3>📋 Log URL Terakhir</h3>
-    <div class="log" id="logBox">Belum ada link yang diklik.</div>
-  </div>
+        // Riwayat URL
+        let urlHistory = JSON.parse(localStorage.getItem('deeplinkHistory') || '[]');
 
-</div>
+        // Toggle payload section
+        function togglePayload(type) {
+            const toggle = document.getElementById(`${type}-payload-toggle`);
+            const section = document.getElementById(`${type}-payload-section`);
+            if (toggle.checked) {
+                section.classList.add('open');
+            } else {
+                section.classList.remove('open');
+            }
+            updatePreview(type.toUpperCase() === 'SALDO' ? 'CEK_SALDO' : type.toUpperCase() === 'TARIK' ? 'TARIK_TUNAI' : 'TRANSFER');
+        }
 
-<script>
-  // MENU value pakai spasi: "CEK SALDO" | "TRANSFER" | "TARIK TUNAI"
-  const paramsByMenu = {
-    CEK_SALDO: {
-      menu: 'CEK SALDO',
-      payload: JSON.stringify({ norek: '12345678990', bank: 'BRI' })
-    },
-    TRANSFER: {
-      menu: 'TRANSFER',
-      nominal: '1000',
-      norek: '12345678990',
-      bank: 'BRI',
-      payload: JSON.stringify({ note: 'test transfer' })
-    },
-    TARIK_TUNAI: {
-      menu: 'TARIK TUNAI',
-      payload: JSON.stringify({ norek: '12345678990', bank: 'BRI' })
-    }
-  };
+        // Switch tab
+        function switchTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
 
-  function buildUrl(scheme, menu) {
-    const params = paramsByMenu[menu];
-    const query = Object.entries(params)
-      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
-      .join('&');
-    return `${scheme}://miniatm.com/openapp?${query}`;
-  }
+        // Build URL
+        function buildUrl(scheme, menu) {
+            const params = getParams(menu);
+            const query = Object.entries(params)
+                .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+                .join('&');
+            return `${scheme}://miniatm.com/openapp?${query}`;
+        }
 
-  function openLink(scheme, menu) {
-    const url = buildUrl(scheme, menu);
-    document.getElementById('logBox').textContent = url;
-    window.location.href = url;
-  }
+        // Get parameters based on menu
+        function getParams(menu) {
+            const params = { menu: menu.replace('_', ' ') };
+            
+            if (menu === 'TRANSFER') {
+                const nominal = document.getElementById('transfer-nominal').value;
+                const norek = document.getElementById('transfer-norek').value;
+                const bank = document.getElementById('transfer-bank').value;
+                
+                if (nominal) params.nominal = nominal;
+                if (norek) params.norek = norek;
+                if (bank) params.bank = bank;
+            }
 
-  // Tampilkan preview parameter di tiap card
-  Object.keys(paramsByMenu).forEach(menu => {
-    const el = document.getElementById(`param-${menu}`);
-    if (el) {
-      el.textContent = buildUrl('ma', menu);
-    }
-  });
-</script>
+            // Payload
+            const type = menu === 'CEK_SALDO' ? 'saldo' : menu === 'TARIK_TUNAI' ? 'tarik' : 'transfer';
+            const toggle = document.getElementById(`${type}-payload-toggle`);
+            if (toggle && toggle.checked) {
+                const payloadEl = document.getElementById(`${type}-payload`);
+                if (payloadEl && payloadEl.value.trim()) {
+                    try {
+                        const payloadObj = JSON.parse(payloadEl.value);
+                        params.payload = JSON.stringify(payloadObj);
+                    } catch (e) {
+                        params.payload = payloadEl.value;
+                    }
+                }
+            }
+
+            return params;
+        }
+
+        // Open link
+        function openLink(scheme, menu) {
+            const url = buildUrl(scheme, menu);
+            
+            // Update log
+            const logBox = document.getElementById('logBox');
+            logBox.querySelector('.log-text').textContent = url;
+            
+            // Add to history
+            addToHistory(url, menu);
+            
+            // Open URL
+            window.location.href = url;
+        }
+
+        // Update preview
+        function updatePreview(menu) {
+            const url = buildUrl('ma', menu);
+            const paramEl = document.getElementById(`param-${menu}`);
+            if (paramEl) {
+                paramEl.querySelector('.param-text').textContent = url;
+            }
+        }
+
+        // Add to history
+        function addToHistory(url, menu) {
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            const date = now.toLocaleDateString('id-ID', { day: '2-digit', month: 'short' });
+            
+            urlHistory.unshift({
+                url: url,
+                menu: menu,
+                time: time,
+                date: date,
+                timestamp: now.getTime()
+            });
+
+            // Keep only last 20 items
+            if (urlHistory.length > 20) {
+                urlHistory = urlHistory.slice(0, 20);
+            }
+
+            // Save to localStorage
+            localStorage.setItem('deeplinkHistory', JSON.stringify(urlHistory));
+            
+            // Update UI
+            renderHistory();
+        }
+
+        // Render history
+        function renderHistory() {
+            const historyList = document.getElementById('historyList');
+            
+            if (urlHistory.length === 0) {
+                historyList.innerHTML = '<div style="color: #667085; font-size: 12px;">Belum ada riwayat</div>';
+                return;
+            }
+
+            historyList.innerHTML = urlHistory.map((item, index) => `
+                <div class="history-item" onclick="loadFromHistory(${index})">
+                    <div style="color: #12b76a; margin-bottom: 2px;">${item.menu.replace('_', ' ')}</div>
+                    <div style="color: #d0d5dd; word-break: break-all;">${item.url.length > 60 ? item.url.substring(0, 60) + '...' : item.url}</div>
+                    <div class="time">${item.date} ${item.time}</div>
+                </div>
+            `).join('');
+        }
+
+        // Load from history
+        function loadFromHistory(index) {
+            const item = urlHistory[index];
+            const logBox = document.getElementById('logBox');
+            logBox.querySelector('.log-text').textContent = item.url;
+            window.location.href = item.url;
+        }
+
+        // Clear history
+        function clearHistory() {
+            urlHistory = [];
+            localStorage.removeItem('deeplinkHistory');
+            renderHistory();
+            showToast('Riwayat dihapus');
+        }
+
+        // Copy to clipboard
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            const text = element.querySelector('.param-text, .log-text').textContent;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('Tersalin ke clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+            });
+        }
+
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Update all previews
+            updatePreview('CEK_SALDO');
+            updatePreview('TRANSFER');
+            updatePreview('TARIK_TUNAI');
+            
+            // Render history
+            renderHistory();
+        });
+    </script>
 
 </body>
+
 </html>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Deep Link MiniATM</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: #f2f4f7;
+    margin: 0;
+    padding: 24px 16px;
+    color: #1a1a1a;
+  }
+  .container {
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-size: 20px;
+    margin-bottom: 4px;
+  }
+  p.desc {
+    font-size: 13px;
+    color: #667085;
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  .card h3 {
+    margin: 0 0 12px 0;
+    font-size: 15px;
+  }
+  .menu-btn {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+  }
+  .btn-saldo   { background: #12b76a; }
+  .btn-transfer{ background: #2970ff; }
+  .btn-tarik   { background: #f04438; }
+
+  .scheme-label {
+    font-size: 12px;
+    color: #667085;
+    margin: 12px 0 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .link-block { display: flex; gap: 8px; margin-bottom: 8px; }
+  .link-block a { flex: 1; }
+  .link-block .small { font-size: 13px; padding: 10px; }
+
+  .params {
+    font-size: 12px;
+    background: #f9fafb;
+    border: 1px solid #eaecf0;
+    border-radius: 8px;
+    padding: 10px;
+    margin-top: 8px;
+    color: #475467;
+    word-break: break-all;
+  }
+
+  .log {
+    background: #101828;
+    color: #d0d5dd;
+    font-family: monospace;
+    font-size: 12px;
+    padding: 10px;
+    border-radius: 8px;
+    min-height: 60px;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <h1>Test Deep Link MiniATM</h1>
+  <p class="desc">Klik tombol untuk trigger deep link. Gunakan tombol <b>ma://</b> untuk custom scheme, atau <b>https://</b> untuk App Links.</p>
+
+  <!-- CEK SALDO -->
+  <div class="card">
+    <h3>💰 Cek Saldo</h3>
+    <div class="link-block">
+      <a class="menu-btn btn-saldo small" href="#" onclick="openLink('ma', 'CEK_SALDO'); return false;">ma:// Cek Saldo</a>
+      <a class="menu-btn btn-saldo small" href="#" onclick="openLink('https', 'CEK_SALDO'); return false;">https:// Cek Saldo</a>
+    </div>
+    <div class="params" id="param-CEK_SALDO"></div>
+  </div>
+
+  <!-- TRANSFER -->
+  <div class="card">
+    <h3>🔁 Transfer</h3>
+    <div class="link-block">
+      <a class="menu-btn btn-transfer small" href="#" onclick="openLink('ma', 'TRANSFER'); return false;">ma:// Transfer</a>
+      <a class="menu-btn btn-transfer small" href="#" onclick="openLink('https', 'TRANSFER'); return false;">https:// Transfer</a>
+    </div>
+    <div class="params" id="param-TRANSFER"></div>
+  </div>
+
+  <!-- TARIK TUNAI -->
+  <div class="card">
+    <h3>💵 Tarik Tunai</h3>
+    <div class="link-block">
+      <a class="menu-btn btn-tarik small" href="#" onclick="openLink('ma', 'TARIK_TUNAI'); return false;">ma:// Tarik Tunai</a>
+      <a class="menu-btn btn-tarik small" href="#" onclick="openLink('https', 'TARIK_TUNAI'); return false;">https:// Tarik Tunai</a>
+    </div>
+    <div class="params" id="param-TARIK_TUNAI"></div>
+  </div>
+
+  <div class="card">
+    <h3>📋 Log URL Terakhir</h3>
+    <div class="log" id="logBox">Belum ada link yang diklik.</div>
+  </div>
+
+</div>
+
+<script>
+  // MENU value pakai spasi: "CEK SALDO" | "TRANSFER" | "TARIK TUNAI"
+  const paramsByMenu = {
+    CEK_SALDO: {
+      menu: 'CEK SALDO',
+      payload: JSON.stringify({ norek: '12345678990', bank: 'BRI' })
+    },
+    TRANSFER: {
+      menu: 'TRANSFER',
+      nominal: '1000',
+      norek: '12345678990',
+      bank: 'BRI',
+      payload: JSON.stringify({ note: 'test transfer' })
+    },
+    TARIK_TUNAI: {
+      menu: 'TARIK TUNAI',
+      payload: JSON.stringify({ norek: '12345678990', bank: 'BRI' })
+    }
+  };
+
+  function buildUrl(scheme, menu) {
+    const params = paramsByMenu[menu];
+    const query = Object.entries(params)
+      .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+      .join('&');
+    return `${scheme}://miniatm.com/openapp?${query}`;
+  }
+
+  function openLink(scheme, menu) {
+    const url = buildUrl(scheme, menu);
+    document.getElementById('logBox').textContent = url;
+    window.location.href = url;
+  }
+
+  // Tampilkan preview parameter di tiap card
+  Object.keys(paramsByMenu).forEach(menu => {
+    const el = document.getElementById(`param-${menu}`);
+    if (el) {
+      el.textContent = buildUrl('ma', menu);
+    }
+  });
+</script>
+
+</body>
+</html>
